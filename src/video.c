@@ -1,22 +1,16 @@
 #include "video.h"
 
-#define SDL_PLATFORMER_WINDOW_TITLE "Platformer"
-#define SDL_PLATFORMER_WINDOW_WIDTH 800
-#define SDL_PLATFORMER_WINDOW_HEIGHT 600
-
-SDL_Window *video_init(void)
+SDL_Window *video_init(char *title, int window_width, int window_height)
 {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    fprintf(stderr, "Failed to initialize SDL: %s", SDL_GetError());
+    fprintf(stderr, "Failed to initialize SDL: %s\n", SDL_GetError());
     return NULL;
   }
 
-  SDL_Window *window = SDL_CreateWindow(SDL_PLATFORMER_WINDOW_TITLE,
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-      SDL_PLATFORMER_WINDOW_WIDTH, SDL_PLATFORMER_WINDOW_HEIGHT, 
-      SDL_WINDOW_SHOWN);
+  SDL_Window *window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, 
+      SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN);
   if (!window) {
-    fprintf(stderr, "Failed to create window: %s", SDL_GetError());
+    fprintf(stderr, "Failed to create window: %s\n", SDL_GetError());
     return NULL;
   }
 
