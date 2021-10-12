@@ -13,6 +13,7 @@ LIBS=\
   -lSDL2_image
 OBJS=\
 	game.o \
+	level.o \
   main.o \
 	player.o \
   video.o

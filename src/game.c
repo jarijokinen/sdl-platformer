@@ -1,6 +1,6 @@
-#include <SDL2/SDL_keyboard.h>
 #include <stdbool.h>
 #include "game.h"
+#include "level.h"
 #include "player.h"
 
 void game_update(Player *player)
@@ -8,10 +8,11 @@ void game_update(Player *player)
   player_update(player);
 }
 
-void game_render(SDL_Renderer *renderer, Player *player)
+void game_render(SDL_Renderer *renderer, Level *level, Player *player)
 {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
+  level_render(level);
   player_render(player);
   SDL_RenderPresent(renderer);
 }
@@ -21,6 +22,7 @@ void game_loop(SDL_Renderer *renderer)
   bool running = true;
   SDL_Event event;
 
+  Level level = level_init(renderer);
   Player player = player_init(renderer); 
   const uint8_t *keys = SDL_GetKeyboardState(NULL);
 
@@ -35,6 +37,8 @@ void game_loop(SDL_Renderer *renderer)
 
     player_handle_input(&player, keys);
     game_update(&player);
-    game_render(renderer, &player);
+    game_render(renderer, &level, &player);
   }
+
+  free(level.entities);
 }
