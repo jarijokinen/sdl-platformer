@@ -21,7 +21,8 @@ void game_loop(SDL_Renderer *renderer)
   bool running = true;
   SDL_Event event;
 
-  Player player = player_init(renderer);
+  Player player = player_init(renderer); 
+  const uint8_t *keys = SDL_GetKeyboardState(NULL);
 
   while (running) {
     while (SDL_PollEvent(&event)) {
@@ -31,8 +32,6 @@ void game_loop(SDL_Renderer *renderer)
           break;
       }
     }
-    
-    const uint8_t *keys = SDL_GetKeyboardState(NULL);
 
     player_handle_input(&player, keys);
     game_update(&player);
