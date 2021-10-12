@@ -10,6 +10,12 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
+static const int player_walk_sprites[3][4] = {
+  { 0, 97, 72, 97 },
+  { 72, 97, 72, 97 },
+  { 144, 97, 72, 97 }
+};
+
 Player player_init(SDL_Renderer *renderer)
 {
   SDL_Surface *player_surface = IMG_Load("assets/player_spritesheet.png");
@@ -27,6 +33,8 @@ Player player_init(SDL_Renderer *renderer)
     .ax = 0.0,
     .ay = 0.0,
     .state = SDL_PLATFORMER_PLAYER_STATE_IDLE,
+    .facing = SDL_PLATFORMER_PLAYER_FACING_RIGHT,
+    .animation_frame = 0,
     .renderer = renderer,
     .spritesheet = player_texture
   };
@@ -100,6 +108,9 @@ void player_update(Player *player, Level *level) {
   } else {
     player->x = new_x;
   }
+
+  // Animation frame
+  player->animation_frame = (SDL_GetTicks() / 100) % 3;
 }
 
 void player_render(Player *player)
@@ -111,6 +122,13 @@ void player_render(Player *player)
     .h = 92
   };
 
+  switch (player->state) {
+    case SDL_PLATFORMER_PLAYER_STATE_WALK:
+      src_rect.x = player_walk_sprites[player->animation_frame][0];
+      src_rect.y = player_walk_sprites[player->animation_frame][1];
+      break;
+  };
+
   SDL_Rect dst_rect = {
     .x = player->x,
     .y = player->y,
@@ -118,18 +136,28 @@ void player_render(Player *player)
     .h = player->h
   };
 
-  SDL_RenderCopy(player->renderer, player->spritesheet, &src_rect, &dst_rect);
+  if (player->facing == SDL_PLATFORMER_PLAYER_FACING_RIGHT) {
+    SDL_RenderCopy(player->renderer, player->spritesheet, &src_rect, &dst_rect);
+  } else {
+    SDL_RenderCopyEx(player->renderer, player->spritesheet, &src_rect, &dst_rect,
+        0, NULL, SDL_FLIP_HORIZONTAL);
+  }
 }
 
 void player_handle_input(Player *player, const uint8_t *keys)
 {
   if (keys[SDL_SCANCODE_D]) {
+    player->state = SDL_PLATFORMER_PLAYER_STATE_WALK;
+    player->facing = SDL_PLATFORMER_PLAYER_FACING_RIGHT;
     player->ax = SDL_PLATFORMER_PLAYER_MAX_AX;
   }
   if (keys[SDL_SCANCODE_A]) {
+    player->state = SDL_PLATFORMER_PLAYER_STATE_WALK;
+    player->facing = SDL_PLATFORMER_PLAYER_FACING_LEFT;
     player->ax = -SDL_PLATFORMER_PLAYER_MAX_AX;
   }
   if (!keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D]) {
+    player->state = SDL_PLATFORMER_PLAYER_STATE_IDLE;
     player->ax = 0.0;
   }
   if (keys[SDL_SCANCODE_SPACE]) {

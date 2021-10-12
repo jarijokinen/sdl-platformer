@@ -11,6 +11,11 @@ enum {
   SDL_PLATFORMER_PLAYER_STATE_JUMP_ACCELERATE
 };
 
+enum {
+  SDL_PLATFORMER_PLAYER_FACING_RIGHT,
+  SDL_PLATFORMER_PLAYER_FACING_LEFT
+};
+
 typedef struct {
   float x;
   float y;
@@ -21,6 +26,8 @@ typedef struct {
   float ax;
   float ay;
   int state;
+  int facing;
+  int animation_frame;
   SDL_Renderer *renderer;
   SDL_Texture *spritesheet;
 } Player;
