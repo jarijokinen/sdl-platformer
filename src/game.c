@@ -6,6 +6,7 @@
 void game_update(Level *level, Player *player)
 {
   player_update(player, level);
+  level->camx = player->x;
 }
 
 void game_render(SDL_Renderer *renderer, Level *level, Player *player)

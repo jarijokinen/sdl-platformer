@@ -38,6 +38,7 @@ Level level_init(SDL_Renderer *renderer)
   Entity *entity = level_load_map();
 
   return (Level){
+    .camx = 0.0,
     .renderer = renderer,
     .spritesheet = level_texture,
     .entities_list = entity
@@ -55,7 +56,7 @@ void level_render(Level *level)
 
   for (Entity *e = level->entities_list; e->next; e = e->next) {
     SDL_Rect dst_rect = {
-      .x = e->x,
+      .x = e->x - level->camx,
       .y = e->y,
       .w = e->w,
       .h = e->h

@@ -51,7 +51,7 @@ int player_check_collision(Level *level, float x, float y, float w, float h)
   
   for (Entity *e = level->entities_list; e->next; e = e->next) {
     SDL_Rect entity_rect = {
-      .x = e->x,
+      .x = e->x - x,
       .y = e->y,
       .w = e->w,
       .h = e->h

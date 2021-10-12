@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 
 typedef struct {
+  float camx;
   SDL_Renderer *renderer;
   SDL_Texture *spritesheet;
   Entity *entities_list;
