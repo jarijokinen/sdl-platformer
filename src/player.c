@@ -4,6 +4,7 @@
 #define SDL_PLATFORMER_PLAYER_MAX_VX 2.5
 #define SDL_PLATFORMER_PLAYER_MAX_AX 0.5
 #define SDL_PLATFORMER_PLAYER_MAX_VY 9.0
+#define SDL_PLATFORMER_PLAYER_MAX_AY 18.0
 #define SDL_PLATFORMER_PLAYER_GRAVITY_AY 3.0
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -25,6 +26,7 @@ Player player_init(SDL_Renderer *renderer)
     .vy = 0.0,
     .ax = 0.0,
     .ay = 0.0,
+    .state = SDL_PLATFORMER_PLAYER_STATE_IDLE,
     .renderer = renderer,
     .spritesheet = player_texture
   };
@@ -56,10 +58,27 @@ int player_check_collision(Level *level, float x, float y, float w, float h)
 }
 
 void player_update(Player *player, Level *level) {
+  // Jumping
+  if (player->state == SDL_PLATFORMER_PLAYER_STATE_JUMP_START) {
+    player->vy -= 30.0;
+    player->state = SDL_PLATFORMER_PLAYER_STATE_JUMP_ACCELERATE;
+  }
+  if (player->state == SDL_PLATFORMER_PLAYER_STATE_JUMP_ACCELERATE) {
+    if (player->vy < -400.0) {
+      player->state = SDL_PLATFORMER_PLAYER_STATE_IDLE;
+      player->vy = 0.0;
+    } else {
+      player->state = SDL_PLATFORMER_PLAYER_STATE_IDLE;
+      player->vy -= 16.0;
+    }
+  }
+
+  // Gravity
   player->vy += SDL_PLATFORMER_PLAYER_GRAVITY_AY;
+
+  // Collision detection for Y-axis
   float new_y = player->y + MAX(MIN(player->vy, SDL_PLATFORMER_PLAYER_MAX_VY), 
       -SDL_PLATFORMER_PLAYER_MAX_VY);
-
   if (player_check_collision(level, player->x, new_y, player->w, player->h)) {
     player->vy = 0.0;
   }
@@ -67,14 +86,15 @@ void player_update(Player *player, Level *level) {
     player->y = new_y;
   }
   
+  // Walk
   if (player->ax == 0.0) {
     player->vx = 0.0;
   }
-
   player->vx += player->ax;
+
+  // Collision detection for X-axis
   float new_x = player->x + MAX(MIN(player->vx, SDL_PLATFORMER_PLAYER_MAX_VX), 
       -SDL_PLATFORMER_PLAYER_MAX_VX);
-
   if (player_check_collision(level, new_x, player->y, player->w, player->h)) {
     player->vx = 0.0;
   } else {
@@ -111,5 +131,12 @@ void player_handle_input(Player *player, const uint8_t *keys)
   }
   if (!keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D]) {
     player->ax = 0.0;
+  }
+  if (keys[SDL_SCANCODE_SPACE]) {
+    if ((player->state == SDL_PLATFORMER_PLAYER_STATE_IDLE ||
+        player->state == SDL_PLATFORMER_PLAYER_STATE_WALK) &&
+        player->vy == 0.0) {
+      player->state = SDL_PLATFORMER_PLAYER_STATE_JUMP_START;
+    }
   }
 }

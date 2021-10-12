@@ -4,6 +4,14 @@
 #include <SDL2/SDL.h>
 #include "level.h"
 
+enum {
+  SDL_PLATFORMER_PLAYER_STATE_IDLE,
+  SDL_PLATFORMER_PLAYER_STATE_WALK,
+  SDL_PLATFORMER_PLAYER_STATE_JUMP_START,
+  SDL_PLATFORMER_PLAYER_STATE_JUMP_ACCELERATE,
+  SDL_PLATFORMER_PLAYER_STATE_JUMP_STOP
+};
+
 typedef struct {
   float x;
   float y;
@@ -13,6 +21,7 @@ typedef struct {
   float vy;
   float ax;
   float ay;
+  int state;
   SDL_Renderer *renderer;
   SDL_Texture *spritesheet;
 } Player;
