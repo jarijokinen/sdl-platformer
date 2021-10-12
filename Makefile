@@ -14,6 +14,7 @@ LIBS=\
 OBJS=\
 	game.o \
   main.o \
+	player.o \
   video.o
 
 %.o: src/%.c
