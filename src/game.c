@@ -40,5 +40,5 @@ void game_loop(SDL_Renderer *renderer)
     game_render(renderer, &level, &player);
   }
 
-  free(level.entities);
+  level_destroy(&level);
 }

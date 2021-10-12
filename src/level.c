@@ -60,3 +60,8 @@ void level_render(Level *level)
     SDL_RenderCopy(level->renderer, level->spritesheet, &src_rect, &dst_rect);
   }
 }
+
+void level_destroy(Level *level)
+{
+  free(level->entities);
+}

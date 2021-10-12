@@ -13,5 +13,6 @@ typedef struct {
 
 Level level_init(SDL_Renderer *renderer);
 void level_render(Level *level);
+void level_destroy(Level *level);
 
 #endif
