@@ -1,7 +1,7 @@
 #include "player.h"
 #include <SDL2/SDL_image.h>
 
-#define SDL_PLATFORMER_PLAYER_MAX_VX 2.5
+#define SDL_PLATFORMER_PLAYER_MAX_VX 4.5
 #define SDL_PLATFORMER_PLAYER_MAX_AX 0.5
 #define SDL_PLATFORMER_PLAYER_MAX_VY 9.0
 #define SDL_PLATFORMER_PLAYER_MAX_AY 18.0
@@ -23,8 +23,11 @@ Player player_init(SDL_Renderer *renderer)
     SDL_CreateTextureFromSurface(renderer, player_surface);
   SDL_FreeSurface(player_surface);
 
+  int window_width = 0;
+  SDL_GetRendererOutputSize(renderer, &window_width, NULL);
+
   return (Player){
-    .x = 0.0,
+    .x = (window_width / 2) - (player_walk_sprites[0][2] / 2),
     .y = 0.0,
     .w = 72.0,
     .h = 92.0,
@@ -35,15 +38,17 @@ Player player_init(SDL_Renderer *renderer)
     .state = SDL_PLATFORMER_PLAYER_STATE_IDLE,
     .facing = SDL_PLATFORMER_PLAYER_FACING_RIGHT,
     .animation_frame = 0,
+    .renderer_window_width = window_width,
     .renderer = renderer,
     .spritesheet = player_texture
   };
 }
 
-int player_check_collision(Level *level, float x, float y, float w, float h)
+int player_check_collision(Level *level, float x, float y, float w, float h,
+    int window_width)
 {
   SDL_Rect player_rect = {
-    .x = x,
+    .x = (window_width / 2) - (w / 2),
     .y = y,
     .w = w,
     .h = h
@@ -87,7 +92,8 @@ void player_update(Player *player, Level *level) {
   // Collision detection for Y-axis
   float new_y = player->y + MAX(MIN(player->vy, SDL_PLATFORMER_PLAYER_MAX_VY), 
       -SDL_PLATFORMER_PLAYER_MAX_VY);
-  if (player_check_collision(level, player->x, new_y, player->w, player->h)) {
+  if (player_check_collision(level, player->x, new_y, player->w, player->h, 
+        player->renderer_window_width)) {
     player->vy = 0.0;
   }
   else {
@@ -103,7 +109,8 @@ void player_update(Player *player, Level *level) {
   // Collision detection for X-axis
   float new_x = player->x + MAX(MIN(player->vx, SDL_PLATFORMER_PLAYER_MAX_VX), 
       -SDL_PLATFORMER_PLAYER_MAX_VX);
-  if (player_check_collision(level, new_x, player->y, player->w, player->h)) {
+  if (player_check_collision(level, new_x, player->y, player->w, player->h, 
+        player->renderer_window_width)) {
     player->vx = 0.0;
   } else {
     player->x = new_x;
@@ -130,7 +137,7 @@ void player_render(Player *player)
   };
 
   SDL_Rect dst_rect = {
-    .x = player->x,
+    .x = (player->renderer_window_width / 2) - (player->w / 2),
     .y = player->y,
     .w = player->w,
     .h = player->h

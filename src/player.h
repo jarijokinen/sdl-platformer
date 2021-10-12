@@ -28,6 +28,7 @@ typedef struct {
   int state;
   int facing;
   int animation_frame;
+  int renderer_window_width;
   SDL_Renderer *renderer;
   SDL_Texture *spritesheet;
 } Player;
