@@ -10,8 +10,8 @@ enum {
 typedef struct {
   float x;
   float y;
-  float h;
   float w;
+  float h;
   float type;
 } Entity;
 

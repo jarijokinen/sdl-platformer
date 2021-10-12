@@ -3,6 +3,8 @@
 
 #define SDL_PLATFORMER_PLAYER_MAX_VX 2.5
 #define SDL_PLATFORMER_PLAYER_MAX_AX 0.5
+#define SDL_PLATFORMER_PLAYER_MAX_VY 9.0
+#define SDL_PLATFORMER_PLAYER_GRAVITY_AY 3.0
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -18,7 +20,7 @@ Player player_init(SDL_Renderer *renderer)
     .x = 0.0,
     .y = 0.0,
     .w = 72.0,
-    .h = 97.0,
+    .h = 92.0,
     .vx = 0.0,
     .vy = 0.0,
     .ax = 0.0,
@@ -28,8 +30,43 @@ Player player_init(SDL_Renderer *renderer)
   };
 }
 
-void player_update(Player *player)
+int player_check_collision(Level *level, float x, float y, float w, float h)
 {
+  SDL_Rect player_rect = {
+    .x = x,
+    .y = y,
+    .w = w,
+    .h = h
+  };
+
+  for (size_t i = 0; i < level->entities_len; i++) {
+    SDL_Rect entity_rect = {
+      .x = level->entities[i].x,
+      .y = level->entities[i].y,
+      .w = level->entities[i].w,
+      .h = level->entities[i].h
+    };
+
+    if (SDL_HasIntersection(&player_rect, &entity_rect)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+void player_update(Player *player, Level *level) {
+  player->vy += SDL_PLATFORMER_PLAYER_GRAVITY_AY;
+  float new_y = player->y + MAX(MIN(player->vy, SDL_PLATFORMER_PLAYER_MAX_VY), 
+      -SDL_PLATFORMER_PLAYER_MAX_VY);
+
+  if (player_check_collision(level, player->x, new_y, player->w, player->h)) {
+    player->vy = 0.0;
+  }
+  else {
+    player->y = new_y;
+  }
+  
   if (player->ax == 0.0) {
     player->vx = 0.0;
   }
@@ -42,10 +79,10 @@ void player_update(Player *player)
 void player_render(Player *player)
 {
   SDL_Rect src_rect = {
-    .x = 0,
+    .x = 73,
     .y = 0,
     .w = 72,
-    .h = 97
+    .h = 92
   };
 
   SDL_Rect dst_rect = {

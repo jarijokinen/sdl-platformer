@@ -3,9 +3,9 @@
 #include "level.h"
 #include "player.h"
 
-void game_update(Player *player)
+void game_update(Level *level, Player *player)
 {
-  player_update(player);
+  player_update(player, level);
 }
 
 void game_render(SDL_Renderer *renderer, Level *level, Player *player)
@@ -36,7 +36,7 @@ void game_loop(SDL_Renderer *renderer)
     }
 
     player_handle_input(&player, keys);
-    game_update(&player);
+    game_update(&level, &player);
     game_render(renderer, &level, &player);
   }
 

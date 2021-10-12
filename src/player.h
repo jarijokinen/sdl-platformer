@@ -2,6 +2,7 @@
 #define SDL_PLATFORMER_PLAYER_H
 
 #include <SDL2/SDL.h>
+#include "level.h"
 
 typedef struct {
   float x;
@@ -17,7 +18,7 @@ typedef struct {
 } Player;
 
 Player player_init(SDL_Renderer *renderer);
-void player_update(Player *player);
+void player_update(Player *player, Level *level);
 void player_render(Player *player);
 void player_handle_input(Player *player, const uint8_t *keys);
 
