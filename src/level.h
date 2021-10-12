@@ -7,8 +7,7 @@
 typedef struct {
   SDL_Renderer *renderer;
   SDL_Texture *spritesheet;
-  size_t entities_len;
-  Entity *entities;
+  Entity *entities_list;
 } Level;
 
 Level level_init(SDL_Renderer *renderer);

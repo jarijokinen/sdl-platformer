@@ -38,13 +38,13 @@ int player_check_collision(Level *level, float x, float y, float w, float h)
     .w = w,
     .h = h
   };
-
-  for (size_t i = 0; i < level->entities_len; i++) {
+  
+  for (Entity *e = level->entities_list; e->next; e = e->next) {
     SDL_Rect entity_rect = {
-      .x = level->entities[i].x,
-      .y = level->entities[i].y,
-      .w = level->entities[i].w,
-      .h = level->entities[i].h
+      .x = e->x,
+      .y = e->y,
+      .w = e->w,
+      .h = e->h
     };
 
     if (SDL_HasIntersection(&player_rect, &entity_rect)) {

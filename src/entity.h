@@ -7,12 +7,13 @@ enum {
   SDL_PLATFORMER_ENTITY_TYPE_BLOCK
 };
 
-typedef struct {
+typedef struct Entity {
   float x;
   float y;
   float w;
   float h;
   float type;
+  struct Entity *next;
 } Entity;
 
 #endif
