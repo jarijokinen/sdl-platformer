@@ -72,8 +72,14 @@ void player_update(Player *player, Level *level) {
   }
 
   player->vx += player->ax;
-  player->x += MAX(MIN(player->vx, SDL_PLATFORMER_PLAYER_MAX_VX), 
+  float new_x = player->x + MAX(MIN(player->vx, SDL_PLATFORMER_PLAYER_MAX_VX), 
       -SDL_PLATFORMER_PLAYER_MAX_VX);
+
+  if (player_check_collision(level, new_x, player->y, player->w, player->h)) {
+    player->vx = 0.0;
+  } else {
+    player->x = new_x;
+  }
 }
 
 void player_render(Player *player)
